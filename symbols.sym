@@ -1,0 +1,88 @@
+; Símbolos padrão CP/M 2.2
+; Formato: ADDR  NOME  (endereço em hex, sem 0x)
+
+; ─── Vetores de sistema ───────────────────────────────────────────────────────
+0000 WBOOT          ; Warm Boot: reinicialização "leve" do sistema (não limpa hardware)
+0005 BDOS           ; Entrada padrão do BDOS (CALL 5) — interface principal do CP/M
+0038 RST7           ; Vetor de interrupção RST 7 (usado por debug, traps ou BIOS)
+
+; ─── Área do sistema ─────────────────────────────────────────────────────────
+00 SYS_RESET        ; Reinicia o sistema (Warm Boot)
+01 CONSOLE_INPUT    ; Entrada de caractere com echo
+02 CONSOLE_OUTPUT   ; Saída de caractere
+03 READER_INPUT     ; Entrada do reader (paper tape)
+04 PUNCH_OUTPUT     ; Saída para punch
+05 LIST_OUTPUT      ; Saída para list device (impressora)
+06 DIRECT_CONSOLE_IO ; I/O direto console
+07 GET_IOBYTE       ; Retorna configuração I/O
+08 SET_IOBYTE       ; Define configuração I/O
+09 PRINT_STRING     ; Imprime string terminada em '$'
+10 READ_CONSOLE_BUFFER ; Entrada de linha bufferizada
+11 CONSOLE_STATUS   ; Verifica se tecla disponível
+12 GET_VERSION      ; Retorna versão do CP/M - HL = versão (ex: 0022h → 2.2)
+13 RESET_DISK_SYSTEM; Reseta sistema de disco
+14 SELECT_DISK      ; Entrada: E = número do drive (0=A)
+15 OPEN_FILE        ; Entrada: DE = FCB - Retorna: A = 00 sucesso / FF erro
+16 CLOSE_FILE       ; Entrada: DE = FCB
+17 SEARCH_FIRST     ; Busca primeiro arquivo
+18 SEARCH_NEXT      ; Continua busca
+19 DELETE_FILE      ; Remove arquivo
+20 READ_SEQUENTIAL  ; Lê próximo registro (128 bytes)
+21 WRITE_SEQUENTIAL ; Escreve próximo registro
+22 MAKE_FILE        ; Cria arquivo
+23 RENAME_FILE      ; Renomeia arquivo
+24 GET_LOGIN_VECTOR ; Retorna drives ativos
+25 GET_CURRENT_DISK ; Retorna disco atual - A = drive
+26 SET_DMA_ADDRESS  ; Entrada: DE = endereço buffer
+27 GET_ALLOCATION_VECTOR ; HL = ponteiro vetor alocação
+28 WRITE_PROTECT_DISK    ; Marca disco como read-only
+29 GET_READONLY_VECTOR   ; HL = bitmap discos read-only
+30 SET_FILE_ATTRIBUTES   ; Define atributos arquivo
+31 GET_DPB               ; HL = Disk Parameter Block
+32 GET_SET_USER          ; E = FF → GET - E = valor → SET
+33 READ_RANDOM           ; Lê registro aleatório
+34 WRITE_RANDOM          ; Escreve registro aleatório
+35 COMPUTE_FILE_SIZE     ; Calcula tamanho do arquivo
+36 SET_RANDOM_RECORD     ; Define posição aleatória baseado em extent
+37 RESET_DRIVE           ; Reseta drive específico
+
+0000 ZP_BASE        ; Zero Page (endereços 0000–00FF) — acesso rápido pelo CPU
+0004 CDISK          ; Disco atual + número de usuário (user number)
+0006 IOBYTE         ; Byte de configuração de dispositivos de I/O lógico
+0080 DEFAULT_DMA    ; Buffer padrão de DMA (128 bytes para leitura/escrita de arquivos)
+0100 TPA            ; Transient Program Area — onde programas .COM são carregados
+
+; ─── BDOS (Basic Disk Operating System) ───────────────────────────────────────
+; Camada de alto nível do CP/M responsável por arquivos, console e discos
+F800 BDOS_ENTRY     ; Ponto de entrada real do BDOS (interno)
+F803 BDOS_DISPATCH  ; Dispatcher: resolve funções BDOS baseado no registrador C
+
+; ─── CCP (Console Command Processor) ──────────────────────────────────────────
+; Interpretador de comandos do CP/M (equivalente a um shell)
+E800 CCP_ENTRY      ; Entrada principal do CCP
+E803 CCP_START      ; Início da execução do CCP (loop de comandos)
+
+; ─── BIOS (Basic Input Output System) ─────────────────────────────────────────
+; Interface de baixo nível específica da máquina (hardware-dependent)
+
+FE00 BIOS_BASE      ; Base da BIOS na memória
+
+FE00 BIOS_BOOT      ; Cold boot: inicialização completa do sistema
+FE03 BIOS_WBOOT     ; Warm boot: reinicialização sem reset total
+FE06 BIOS_CONST     ; Verifica status do console (tecla disponível?)
+FE09 BIOS_CONIN     ; Entrada de caractere do console
+FE0C BIOS_CONOUT    ; Saída de caractere para o console
+FE0F BIOS_LIST      ; Saída para dispositivo de listagem (impressora)
+FE12 BIOS_PUNCH     ; Saída para dispositivo de perfuração (paper tape)
+FE15 BIOS_READER    ; Entrada de dispositivo leitor (paper tape)
+
+FE18 BIOS_HOME      ; Move cabeça do disco para trilha 0
+FE1B BIOS_SELDSK    ; Seleciona disco lógico
+FE1E BIOS_SETTRK    ; Define trilha atual
+FE21 BIOS_SETSEC    ; Define setor atual
+FE24 BIOS_SETDMA    ; Define endereço DMA para transferência de dados
+
+FE27 BIOS_READ      ; Lê setor do disco para DMA
+FE2A BIOS_WRITE     ; Escreve setor do DMA para disco
+FE2D BIOS_LISTST    ; Status do dispositivo de listagem (pronto?)
+FE30 BIOS_SECTRAN   ; Tradução lógica → física de setores (skew)
