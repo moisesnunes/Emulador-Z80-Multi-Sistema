@@ -3,7 +3,7 @@ CC       = gcc
 SDL3_CFLAGS  := $(shell pkg-config --cflags sdl3 2>/dev/null)
 SDL3_LDFLAGS := $(shell pkg-config --libs sdl3 2>/dev/null)
 
-CXXFLAGS = -std=c++17 -g -MMD -MP -I./include/ -I./include/GL/ -I./include/imgui/ -I./lib/imgui/ -I./src -I./ $(SDL3_CFLAGS)
+CXXFLAGS = -std=c++17 -g -MMD -MP -I./include/ -I./include/GL/ -I./include/imgui/ -I./lib/imgui/ -I./src -I./src/legacy -I./ $(SDL3_CFLAGS)
 CFLAGS   = -g -MMD -MP -I./include/ -I./include/GL/
 LDFLAGS  = -lglfw -lGL -ldl -lpthread
 
@@ -11,18 +11,18 @@ TARGET         = Emulator
 DESKTOP_TARGET = EmulatorDesktop
 BUILD_DIR      = build
 
-CXX_SRCS = emulador.cpp \
+CXX_SRCS = src/legacy/emulador.cpp \
            hexbyte.cpp \
            intel8080.cpp \
            zilogZ80.cpp \
            alu.cpp \
-           gui.cpp \
-           input.cpp \
+           src/legacy/gui.cpp \
+           src/legacy/input.cpp \
            game_config.cpp \
-           cpm_bios.cpp \
-           cpm_ccp.cpp \
-           cpm_debug_state.cpp \
-           msx_machine.cpp \
+           src/legacy/cpm_bios.cpp \
+           src/legacy/cpm_ccp.cpp \
+           src/legacy/cpm_debug_state.cpp \
+           src/legacy/msx_machine.cpp \
            lib/imgui/imgui.cpp \
            lib/imgui/imgui_draw.cpp \
            lib/imgui/imgui_tables.cpp \
